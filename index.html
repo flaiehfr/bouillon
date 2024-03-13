@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parking Information</title>
+    <style>
+        .progress-container {
+            width: 100%;
+            background-color: #ddd;
+        }
+
+        .progress-bar {
+            height: 20px;
+            background-color: #4CAF50;
+            text-align: center;
+            color: white;
+            line-height: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Parking Bouillon</h1>
+    <div id="parkingInfo"></div>
+    <div class="progress-container">
+        <div id="progressBar" class="progress-bar">0%</div>
+    </div>
+
+    <script>
+        fetch('https://www.vdl.lu/fr/parking/data.json')
+        .then(response => response.json())
+        .then(data => {
+            const parkingBouillon = data.parking.find(p => p.title === 'Bouillon');
+            if (parkingBouillon) {
+                displayParkingInfo(parkingBouillon);
+            } else {
+                document.getElementById('parkingInfo').innerText = 'Parking Bouillon non trouvé';
+            }
+        })
+        .catch(error => {
+            console.error('Erreur lors du chargement des données du parking:', error);
+        });
+
+        function displayParkingInfo(parking) {
+            const title = parking.title;
+            const total = parking.total;
+            const current = parking.actuel;
+            const percentage = Math.round((current / total) * 100);
+
+            const progressBar = document.getElementById('progressBar');
+            progressBar.style.width = `${percentage}%`;
+            progressBar.innerText = `${current} / ${total}`;
+        }
+    </script>
+</body>
+</html>
